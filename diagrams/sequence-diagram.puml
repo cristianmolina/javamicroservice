@@ -1,0 +1,25 @@
+@startuml
+actor User
+
+User -> UserController : POST /users/sign-up
+UserController -> UserServiceImpl : signUp(user)
+UserServiceImpl -> UserRepository : findByEmail(user.email)
+UserRepository --> UserServiceImpl : Optional<User>
+UserServiceImpl -> KeyGenerator : generateToken(email, sessionId)
+KeyGenerator --> UserServiceImpl : token
+UserServiceImpl -> UserRepository : save(user)
+UserRepository --> UserServiceImpl : User
+UserServiceImpl --> UserController : User (with token)
+User --> User : Receives response
+
+User -> UserController : GET /users/login
+UserController -> UserServiceImpl : login(token)
+UserServiceImpl -> KeyGenerator : getEmailFromToken(token)
+KeyGenerator --> UserServiceImpl : email
+UserServiceImpl -> UserRepository : findByEmail(email)
+UserRepository --> UserServiceImpl : Optional<User>
+UserServiceImpl -> KeyGenerator : getSessionIdFromToken(token)
+KeyGenerator --> UserServiceImpl : sessionId
+UserServiceImpl --> UserController : User (with updated token)
+User --> User : Receives response
+@enduml

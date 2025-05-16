@@ -1,0 +1,40 @@
+@startuml
+package "Controller Layer" {
+    [UserController]
+    [UserRequestDto]
+    [UserResponseDto]
+    [PhoneDto]
+}
+
+package "Service Layer" {
+    [UserServiceImpl]
+    [UserService]
+    [UserMapper]
+}
+
+package "Domain Layer" {
+    [User]
+}
+
+package "Repository Layer" {
+    [UserRepository]
+}
+
+package "Utilities" {
+    [KeyGenerator]
+}
+
+[UserController] --> [UserServiceImpl] : Calls
+[UserServiceImpl] --> [UserRepository] : Uses
+[UserServiceImpl] --> [KeyGenerator] : Uses
+[UserController] --> [UserRequestDto] : Receives
+[UserController] --> [UserResponseDto] : Returns
+[UserRequestDto] --> [PhoneDto] : Contains
+[UserResponseDto] --> [PhoneDto] : Contains
+[UserServiceImpl] --> [User] : Manages
+[UserRepository] --> (Database) : Interacts
+[UserServiceImpl] --> [UserMapper] : Uses
+[UserMapper] --> [UserRequestDto] : Maps
+[UserMapper] --> [UserResponseDto] : Maps
+[UserMapper] --> [User] : Maps
+@enduml
