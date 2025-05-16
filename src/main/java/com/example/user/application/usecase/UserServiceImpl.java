@@ -33,10 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User signUp(User user) {
-        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
-        if (existingUser.isPresent()) {
-            throw new IllegalArgumentException("User already exists");
-        }
+        userRepository.findByEmail(user.getEmail())
+                .ifPresent(existingUser -> {
+                    throw new IllegalArgumentException("User already exists");
+                });
 
         String idSession = UUID.randomUUID().toString();
         String token = generateToken(user.getEmail(), idSession);
