@@ -1,5 +1,7 @@
-package com.example.user.infrastructure.exception;
+package com.example.user.configuration;
 
+import com.example.user.constantes.Constants;
+import com.example.user.dto.ErrorResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -17,52 +19,52 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Malformed JSON request"
+                Constants.MALFORMED_JSON
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponseDto> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
-        ErrorResponse error = new ErrorResponse(
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Validation error: " + errors.toString()
+                Constants.VALIDATION_ERROR + errors.toString()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Missing request parameter: " + ex.getParameterName()
+                Constants.MISSING_REQUEST_PARAMETER + ex.getParameterName()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.BAD_REQUEST.value(),
-                "Invalid type for parameter: " + ex.getName()
+                Constants.INVALID_TYPE_PARAMETER + ex.getName()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleIllegalArgumentException(IllegalArgumentException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage()
@@ -71,19 +73,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleGenericException(Exception ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Unexpected error occurred"
+                Constants.UNEXPECTED_ERROR
         );
-        ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 
     @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorResponse> handleResponseStatusException(ResponseStatusException ex) {
-        ErrorResponse error = new ErrorResponse(
+    public ResponseEntity<ErrorResponseDto> handleResponseStatusException(ResponseStatusException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(
                 System.currentTimeMillis(),
                 ex.getStatus().value(),
                 ex.getReason()

@@ -1,4 +1,4 @@
-package com.example.user.infrastructure.configuration;
+package com.example.user.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,8 +12,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users/sign-up", "/users/login").permitAll() // Permitir acceso público
-                .anyRequest().authenticated(); // Requiere autenticación para otros endpoints
+                .antMatchers("/users/sign-up", "/users/login").permitAll()
+                .anyRequest().authenticated();
         return http.build();
     }
 }

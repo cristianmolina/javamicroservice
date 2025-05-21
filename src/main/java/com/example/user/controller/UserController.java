@@ -1,9 +1,9 @@
-package com.example.user.infrastructure.controller;
+package com.example.user.controller;
 
-import com.example.user.application.usecase.UserService;
-import com.example.user.domain.model.User;
-import com.example.user.infrastructure.controller.dto.UserMapper;
-import com.example.user.infrastructure.controller.dto.UserRequestDto;
+import com.example.user.service.UserService;
+import com.example.user.model.User;
+import com.example.user.converter.UserMapper;
+import com.example.user.dto.UserRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,17 +28,13 @@ public class UserController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<?> signUp(@Valid @RequestBody UserRequestDto userRequestDto) {
-        // Convierte el DTO a la entidad User
         User user = userMapper.mapToEntity(userRequestDto);
-        // Guarda el usuario y retorna la información.
         return ResponseEntity.ok(userMapper.mapToEntity(userService.signUp(user)));
     }
 
     @GetMapping("/login")
     public ResponseEntity<?> login(@RequestHeader("Authorization") String token) {
-        // Consultar el usuario por el token
         User user = userService.login(token);
-        // Retornar la información del usuario
         return ResponseEntity.ok(userMapper.mapToEntity(user));
     }
 }

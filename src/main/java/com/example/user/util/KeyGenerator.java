@@ -1,4 +1,4 @@
-package com.example.user.infrastructure.utilies;
+package com.example.user.util;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

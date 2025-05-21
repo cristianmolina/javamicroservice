@@ -1,4 +1,4 @@
-package com.example.user.domain.model;
+package com.example.user.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Embeddable;
 
 
-//@Data
-//@NoArgsConstructor
 @Embeddable
 public class Phone {
     private String number;

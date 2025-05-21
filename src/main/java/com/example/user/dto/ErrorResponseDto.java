@@ -1,13 +1,11 @@
-package com.example.user.infrastructure.exception;
+package com.example.user.dto;
 
-//@Data
-//@AllArgsConstructor
-public class ErrorResponse {
+public class ErrorResponseDto {
     private long timestamp;
     private int codigo;
     private String detail;
 
-    public ErrorResponse(long timestamp, int codigo, String detail) {
+    public ErrorResponseDto(long timestamp, int codigo, String detail) {
         this.timestamp = timestamp;
         this.codigo = codigo;
         this.detail = detail;

@@ -1,9 +1,7 @@
-package com.example.user.infrastructure.controller.dto;
+package com.example.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-//@Data
-//@NoArgsConstructor
 public class PhoneDto {
     private String number;
     @JsonProperty("citycode")

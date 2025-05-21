@@ -1,7 +1,4 @@
-package com.example.user.domain.model;
-
-import lombok.Data;
-import lombok.NoArgsConstructor;
+package com.example.user.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -10,8 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-//@Data
-//@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

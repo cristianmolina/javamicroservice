@@ -1,11 +1,12 @@
-package com.example.user.application.usecase;
+package com.example.user.service;
 
-import com.example.user.domain.model.User;
-import com.example.user.infrastructure.repository.UserRepository;
+import com.example.user.configuration.JwtProperties;
+import com.example.user.constantes.Constants;
+import com.example.user.model.User;
+import com.example.user.repository.UserRepository;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,19 +24,19 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-    @Value("${jwt.secret}")
-    private String secretKey;
+    private final JwtProperties jwtProperties;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, JwtProperties jwtProperties) {
         this.userRepository = userRepository;
         this.passwordEncoder = new BCryptPasswordEncoder(4);
+        this.jwtProperties = jwtProperties;
     }
 
     @Override
     public User signUp(User user) {
         userRepository.findByEmail(user.getEmail())
                 .ifPresent(existingUser -> {
-                    throw new IllegalArgumentException("User already exists");
+                    throw new IllegalArgumentException(Constants.USER_ALREADY_EXISTS);
                 });
 
         String idSession = UUID.randomUUID().toString();
@@ -57,44 +58,39 @@ public class UserServiceImpl implements UserService {
     public User login(String token) {
 
         try {
-            // normalizar el token
             token = token.replace("Bearer ", "");
-            // obtener el email del token
             String email = getEmailFromToken(token);
-            // obtener el sessionId del token
+
             String sessionId = getSessionIdFromToken(token);
 
-            // buscar el usuario por email
             Optional<User> userOptional = userRepository.findByEmail(email);
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                // verificar si el token es válido
+
                 if (passwordEncoder.matches(sessionId, user.getSessionId())) {
-                    // actualizar el último inicio de sesión
                     String idSessionNuevo = UUID.randomUUID().toString();
                     String tokenNuevo = generateToken(user.getEmail(), idSessionNuevo);
                     user.setLastLogin(LocalDateTime.now());
                     user.setSessionId(passwordEncoder.encode(idSessionNuevo));
                     User saved = userRepository.save(user);
 
-                    // asociar el nuevo token a la respuesta
                     saved.setToken(tokenNuevo);
                     return saved;
                 } else {
-                    throw new IllegalArgumentException("Invalid token");
+                    throw new IllegalArgumentException(Constants.INVALID_TOKEN);
                 }
             } else {
-                throw new IllegalArgumentException("User not found");
+                throw new IllegalArgumentException(Constants.USER_NOT_FOUND);
             }
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid or expired token", e);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,Constants.INVALID_CREDENTIALS, e);
         }
 
     }
 
     private String getSessionIdFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(Base64.getDecoder().decode(secretKey))
+                .setSigningKey(Base64.getDecoder().decode(jwtProperties.getSecret()))
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -103,7 +99,7 @@ public class UserServiceImpl implements UserService {
 
     private String getEmailFromToken(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(Base64.getDecoder().decode(secretKey))
+                .setSigningKey(Base64.getDecoder().decode(jwtProperties.getSecret()))
                 .build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -112,7 +108,7 @@ public class UserServiceImpl implements UserService {
 
     private String generateToken(String email, String sessionId) {
 
-        Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKey));
+        Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtProperties.getSecret()));
 
         return Jwts.builder()
                 .setId(sessionId)

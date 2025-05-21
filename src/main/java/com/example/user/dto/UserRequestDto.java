@@ -1,11 +1,9 @@
-package com.example.user.infrastructure.controller.dto;
+package com.example.user.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
 import java.util.List;
 
-//@Data
-//@NoArgsConstructor
 public class UserRequestDto {
 
     private String name;

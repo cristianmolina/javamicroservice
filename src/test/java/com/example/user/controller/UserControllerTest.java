@@ -1,7 +1,8 @@
-package com.example.user.infrastructure.controller;
+package com.example.user.controller;
 
-import com.example.user.infrastructure.controller.dto.PhoneDto;
-import com.example.user.infrastructure.controller.dto.UserRequestDto;
+import com.example.user.constantes.Constants;
+import com.example.user.dto.PhoneDto;
+import com.example.user.dto.UserRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,7 +98,7 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.detail").value("User already exists"));
+                .andExpect(jsonPath("$.detail").value(Constants.USER_ALREADY_EXISTS));
     }
 
     @Test
@@ -171,7 +172,7 @@ class UserControllerTest {
                         .header("Authorization", invalidToken)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.detail").value("Invalid or expired token"));
+                .andExpect(jsonPath("$.detail").value(Constants.INVALID_CREDENTIALS));
     }
 
 

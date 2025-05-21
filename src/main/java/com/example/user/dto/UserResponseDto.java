@@ -1,4 +1,4 @@
-package com.example.user.infrastructure.controller.dto;
+package com.example.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,8 +7,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-//@Data
-//@NoArgsConstructor
 public class UserResponseDto {
 
     private UUID id;

@@ -1,6 +1,8 @@
-package com.example.user.infrastructure.controller.dto;
+package com.example.user.converter;
 
-import com.example.user.domain.model.User;
+import com.example.user.dto.UserRequestDto;
+import com.example.user.dto.UserResponseDto;
+import com.example.user.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 
